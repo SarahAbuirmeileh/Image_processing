@@ -88,18 +88,23 @@ class EdgeDetection:
         kernel /= np.sum(kernel)  # Normalize
         return kernel
 
+    def canny_edge_detection(self,lower_threshold, upper_threshold ):
+        canny_edge_detection = cv.Canny(self.image, lower_threshold, upper_threshold)
+        edge_detection.display_image(canny_edge_detection, "Canny Edge Detection")
+
 
 if __name__ == "__main__":
-    # image = "./assets/flower.png"
+    image = "./assets/flower.png"
+    threshold = 35
 
-    # threshold = 45
-    # edge_detection = EdgeDetection(image)
-    # edge_detection.sobel_edge_detection(threshold)
-    # edge_detection.sobel_edge_detection_with_smoothing(threshold)
+    # image = "./assets/hand_ct.jpeg"
+    # threshold = 30
+    
+    lower_threshold = 20
+    upper_threshold = 60
 
-    image = "./assets/hand_ct.jpeg"
-
-    threshold = 30
     edge_detection = EdgeDetection(image)
     edge_detection.sobel_edge_detection(threshold)
     edge_detection.sobel_edge_detection_with_smoothing(threshold)
+
+    edge_detection.canny_edge_detection(lower_threshold, upper_threshold)
