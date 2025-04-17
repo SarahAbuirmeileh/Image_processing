@@ -13,10 +13,10 @@ class EdgeDetection:
 
         self.gaussian_kernel = self.generate_gaussian_kernel(kernel_size=5, sigma=4.0)
         # self.gaussian_kernel = np.array([[1,4,7,4,1],
-            #                              [4,16,26,16,4],
-            #                              [7,26,41,26,7],
-            #                              [4,16,26,16,4],
-            #                              [1,4,7,4,1]], dtype=np.float32)
+        #                              [4,16,26,16,4],
+        #                              [7,26,41,26,7],
+        #                              [4,16,26,16,4],
+        #                              [1,4,7,4,1]], dtype=np.float32)
         # self.gaussian_kernel /= np.sum(self.gaussian_kernel)
 
     def _read_image(self):
@@ -50,8 +50,8 @@ class EdgeDetection:
 
         for y in range(-k, k + 1):
             for x in range(-k, k + 1):
-                exponent = -(x**2 + y**2) / (2 * sigma**2)
-                kernel[y + k, x + k] = (1 / (2 * np.pi * sigma**2)) * np.exp(exponent)
+                exponent = -(x ** 2 + y ** 2) / (2 * sigma ** 2)
+                kernel[y + k, x + k] = (1 / (2 * np.pi * sigma ** 2)) * np.exp(exponent)
 
         kernel /= np.sum(kernel)  # Normalize
         return kernel
@@ -60,7 +60,7 @@ class EdgeDetection:
     def convolution_trivial_way(self, image, kernel):
         kernel_height, kernel_width = kernel.shape
         image_height, image_width = image.shape
-        
+
         kh = kernel_height // 2
         kw = kernel_width // 2
 
@@ -70,8 +70,8 @@ class EdgeDetection:
         output = np.zeros((image_height, image_width))
 
         # Start from kh, kw and subtract them to skip the borders
-        for ix in range(kh, image_height-kh):
-            for iy in range(kw, image_width-kw):
+        for ix in range(kh, image_height - kh):
+            for iy in range(kw, image_width - kw):
                 sum = 0
                 for kx in range(kernel_height):
                     for kw in range(kernel_width):
@@ -88,9 +88,6 @@ class EdgeDetection:
         image_height, image_width = image.shape
         kernel_height, kernel_width = kernel.shape
 
-        kh = kernel_height // 2
-        kw = kernel_width // 2
-
         # Flip the kernel for correct convolution 
         kernel = np.flipud(kernel)
         kernel = np.fliplr(kernel)
@@ -102,7 +99,8 @@ class EdgeDetection:
             output = np.zeros((output_height, output_width), dtype=np.float32)
 
             # Pad iamge to cover all kernel positions 
-            image = np.pad(image, ((kernel_height - 1, kernel_height - 1), (kernel_width - 1, kernel_width - 1)), mode='constant', constant_values=0)
+            image = np.pad(image, ((kernel_height - 1, kernel_height - 1), (kernel_width - 1, kernel_width - 1)),
+                           mode='constant', constant_values=0)
 
             for ix in range(output_height):
                 for iy in range(output_width):
@@ -111,13 +109,13 @@ class EdgeDetection:
                     region = image[ix:ix + kernel_height, iy:iy + kernel_width]
                     output[ix, iy] = np.sum(region * kernel)
         else:
-           output_height = image_height - kernel_height + 1
-           output_width = image_width - kernel_width + 1
-           output = np.zeros((output_height, output_width), dtype=np.float32)
+            output_height = image_height - kernel_height + 1
+            output_width = image_width - kernel_width + 1
+            output = np.zeros((output_height, output_width), dtype=np.float32)
 
-           for ix in range(output_height):
-            for iy in range(output_width):
-                # Extract the region of the image fully under the kernel
+            for ix in range(output_height):
+                for iy in range(output_width):
+                    # Extract the region of the image fully under the kernel
                     region = image[ix:ix + kernel_height, iy:iy + kernel_width]
                     output[ix, iy] = np.sum(region * kernel)
 
@@ -133,14 +131,14 @@ class EdgeDetection:
         # sobel_edge_detection = self.convolution(smoothed_image, self.sobel_kernel)
         # thresholded_image = self.threshold(sobel_edge_detection, threshold)
         # self.display_image(thresholded_image, "Smoothed Sobel Edge Detection")
-        
+
         # Combine the two kernels
         combined_kernels = self.convolution(self.gaussian_kernel, self.sobel_kernel, True)
         sobel_edge_detection = self.convolution(self.image, combined_kernels)
         thresholded_image = self.threshold(sobel_edge_detection, threshold)
         self.display_image(thresholded_image, "Smoothed Sobel Edge Detection")
 
-    def canny_edge_detection(self,lower_threshold, upper_threshold ):
+    def canny_edge_detection(self, lower_threshold, upper_threshold):
         canny_edge_detection = cv.Canny(self.image, lower_threshold, upper_threshold)
         edge_detection.display_image(canny_edge_detection, "Canny Edge Detection")
 
@@ -151,7 +149,7 @@ if __name__ == "__main__":
 
     image = "./assets/hand_ct.jpeg"
     threshold = 35
-    
+
     lower_threshold = 20
     upper_threshold = 60
 
