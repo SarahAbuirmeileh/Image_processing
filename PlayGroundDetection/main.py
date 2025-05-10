@@ -96,19 +96,24 @@ class DetectionObjectThroughColor:
         intersection_image = self.intersect_images(green_area, saturated_image)
 
         overlay_image = self.overlay_image_with_mask(self.image, intersection_image)
-        cv.imshow('Original Image with Red Mask', overlay_image)
+        cv.imshow('Original image', self.image)
+        cv.imshow('Detected object with red mask', overlay_image)
 
 
 if __name__ == "__main__":
-    image = "./assets/playground1.png"
-    image = "./assets/playground2.png"
+    image1 = "./assets/playground1.png"
+    image2 = "./assets/playground2.png"
+    image3 = "./assets/playground3.jpeg"
+
+    images = [image3, image1, image2]
 
     h_lower_bound = 30
     h_upper_bound = 55
     s_lower_bound = 100
     s_upper_bound = 255
 
-    football_playground_detection = DetectionObjectThroughColor(image, h_lower_bound, h_upper_bound, s_lower_bound,
-                                                                s_upper_bound)
-    football_playground_detection.start()
-    cv.waitKey(0)
+    for image in images:
+        football_playground_detection = DetectionObjectThroughColor(image, h_lower_bound, h_upper_bound, s_lower_bound,
+                                                                    s_upper_bound)
+        football_playground_detection.start()
+        cv.waitKey(0)
