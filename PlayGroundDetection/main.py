@@ -75,12 +75,12 @@ class DetectionObjectThroughColor:
 
         # Trivial way (might be more readable)
         # for i in range(mask.shape[0]):       
-        # for j in range(mask.shape[1]):
-        #     if mask[i, j] != 0:
-        #         original_pixel = image[i, j]
-        #         overlay_pixel = np.array(color, dtype=np.uint8)
-        #         blended_pixel = ((original_pixel.astype(np.uint16) + overlay_pixel.astype(np.uint16)) // 2).astype(np.uint8)
-        #         overlay_image[i, j] = blended_pixel
+        #     for j in range(mask.shape[1]):
+        #         if mask[i, j] != 0:
+        #             original_pixel = image[i, j].astype(np.int16)  
+        #             overlay_pixel = np.array(color, dtype=np.int16)
+        #             blended_pixel = ((original_pixel + overlay_pixel) // 2).astype(np.uint8)
+        #             overlay_image[i, j] = blended_pixel
 
         return overlay_image
 
