@@ -2,14 +2,17 @@ import cv2 as cv
 import numpy as np
 import logging
 
-
 class EdgeDetection:
     def __init__(self, image_path):
         self.image_path = image_path
         self.image = self._read_image()
-        self.sobel_kernel = np.array([[-1, 0, 1],
-                                      [-2, 0, 2],
-                                      [-1, 0, 1]], dtype=np.float32)
+        self.sobel_kernel_x = np.array([[-1, 0, 1],
+                                        [-2, 0, 2],
+                                        [-1, 0, 1]], dtype=np.float32)
+
+        self.sobel_kernel_y = np.array([[-1, -2, -1],
+                                        [0, 0, 0],
+                                        [1, 2, 1]], dtype=np.float32)
 
         self.gaussian_kernel = self.generate_gaussian_kernel(kernel_size=5, sigma=4.0)
         # self.gaussian_kernel = np.array([[1,4,7,4,1],
@@ -41,8 +44,6 @@ class EdgeDetection:
         inverted_image = 255 - image
 
         cv.imshow(image_name, inverted_image)
-        key = cv.waitKey(0)
-        cv.destroyAllWindows()
 
     def generate_gaussian_kernel(self, kernel_size=5, sigma=1.0):
         k = kernel_size // 2
@@ -74,8 +75,8 @@ class EdgeDetection:
             for iy in range(kw, image_width - kw):
                 sum = 0
                 for kx in range(kernel_height):
-                    for kw in range(kernel_width):
-                        sum += image[ix + kx - kh, iy + kw - kw] * kernel[kx, kw]
+                    for ky in range(kernel_width):
+                        sum += image[ix + kx - kh, iy + ky - kw] * kernel[kx, ky]
                 output[ix, iy] = sum
 
         return output
@@ -98,7 +99,7 @@ class EdgeDetection:
             output_width = image_width + kernel_width - 1
             output = np.zeros((output_height, output_width), dtype=np.float32)
 
-            # Pad iamge to cover all kernel positions 
+            # Pad image to cover all kernel positions 
             image = np.pad(image, ((kernel_height - 1, kernel_height - 1), (kernel_width - 1, kernel_width - 1)),
                            mode='constant', constant_values=0)
 
@@ -122,25 +123,32 @@ class EdgeDetection:
         return output
 
     def sobel_edge_detection(self, threshold):
-        sobel_image = self.convolution(self.image, self.sobel_kernel)
-        thresholded = self.threshold(sobel_image, threshold)
+        sobel_x = self.convolution(self.image, self.sobel_kernel_x)
+        sobel_y = self.convolution(self.image, self.sobel_kernel_y)
+        sobel_magnitude = np.sqrt(np.square(sobel_x) + np.square(sobel_y))
+        thresholded = self.threshold(sobel_magnitude, threshold)
         self.display_image(thresholded, "Sobel Edge Detection")
 
     def sobel_edge_detection_with_smoothing(self, threshold):
         # smoothed_image = self.convolution(self.image, self.gaussian_kernel)
-        # sobel_edge_detection = self.convolution(smoothed_image, self.sobel_kernel)
-        # thresholded_image = self.threshold(sobel_edge_detection, threshold)
+        # sobel_x = self.convolution(smoothed_image, self.sobel_kernel_x)
+        # sobel_y = self.convolution(smoothed_image, self.sobel_kernel_y)
+        # sobel_magnitude = np.sqrt(np.square(sobel_x) + np.square(sobel_y))
+        # thresholded_image = self.threshold(sobel_magnitude, threshold)
         # self.display_image(thresholded_image, "Smoothed Sobel Edge Detection")
 
         # Combine the two kernels
-        combined_kernels = self.convolution(self.gaussian_kernel, self.sobel_kernel, True)
-        sobel_edge_detection = self.convolution(self.image, combined_kernels)
-        thresholded_image = self.threshold(sobel_edge_detection, threshold)
+        combined_kernel_x = self.convolution(self.gaussian_kernel, self.sobel_kernel_x, True)
+        combined_kernel_y = self.convolution(self.gaussian_kernel, self.sobel_kernel_y, True)
+        sobel_x = self.convolution(self.image, combined_kernel_x)
+        sobel_y = self.convolution(self.image, combined_kernel_y)
+        sobel_magnitude = np.sqrt(np.square(sobel_x) + np.square(sobel_y))
+        thresholded_image = self.threshold(sobel_magnitude, threshold)
         self.display_image(thresholded_image, "Smoothed Sobel Edge Detection")
 
     def canny_edge_detection(self, lower_threshold, upper_threshold):
         canny_edge_detection = cv.Canny(self.image, lower_threshold, upper_threshold)
-        edge_detection.display_image(canny_edge_detection, "Canny Edge Detection")
+        self.display_image(canny_edge_detection, "Canny Edge Detection")
 
 
 if __name__ == "__main__":
@@ -158,3 +166,6 @@ if __name__ == "__main__":
     edge_detection.sobel_edge_detection_with_smoothing(threshold)
 
     edge_detection.canny_edge_detection(lower_threshold, upper_threshold)
+
+    key = cv.waitKey(0)
+    cv.destroyAllWindows()
