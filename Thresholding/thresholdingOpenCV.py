@@ -43,7 +43,7 @@ class ThresholdingImage:
 
         return image
 
-    def convert_to_gray_scale(image):
+    def convert_to_gray_scale(self, image):
         """
         Converts a colored image to grayscale.
 
@@ -81,7 +81,7 @@ class ThresholdingImage:
 
         return thresholded_image
 
-    def display_image(image, image_name: str):
+    def display_image(self, image, image_name: str):
         """
         Displays an image on the screen.
 
