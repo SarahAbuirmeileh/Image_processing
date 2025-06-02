@@ -14,6 +14,9 @@ class VideoCartoonoization:
 
         if (captured.isOpened() == False):
             print("Error opening the video {self.video_path}")
+        else :
+            _, frame = captured.read()
+            self.images.append(frame)
         
         while(captured.isOpened()):
             success, frame = captured.read()
