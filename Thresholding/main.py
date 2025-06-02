@@ -1,4 +1,4 @@
-from Thresholding.thresholdingOpenCV import ImageType, ThresholdingImage
+from thresholdingOpenCV import ImageType, ThresholdingImage
 
 if __name__ == "__main__":
     

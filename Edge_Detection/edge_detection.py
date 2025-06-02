@@ -110,16 +110,16 @@ class EdgeDetection:
                     region = image[ix:ix + kernel_height, iy:iy + kernel_width]
                     output[ix, iy] = np.sum(region * kernel)
         else:
-            output_height = image_height - kernel_height + 1
-            output_width = image_width - kernel_width + 1
-            output = np.zeros((output_height, output_width), dtype=np.float32)
+            output = np.zeros((image_height, image_width), dtype=np.float32)
+            
+            kh = kernel_height // 2
+            kw = kernel_width // 2
 
-            for ix in range(output_height):
-                for iy in range(output_width):
-                    # Extract the region of the image fully under the kernel
-                    region = image[ix:ix + kernel_height, iy:iy + kernel_width]
+            for ix in range(kh, image_height - kh):
+                for iy in range(kw, image_width - kw):
+                    region = image[ix - kh: ix + kh + 1, iy - kw: iy + kw + 1]
                     output[ix, iy] = np.sum(region * kernel)
-
+                    
         return output
 
     def sobel_edge_detection(self, threshold):
@@ -130,21 +130,21 @@ class EdgeDetection:
         self.display_image(thresholded, "Sobel Edge Detection")
 
     def sobel_edge_detection_with_smoothing(self, threshold):
-        # smoothed_image = self.convolution(self.image, self.gaussian_kernel)
-        # sobel_x = self.convolution(smoothed_image, self.sobel_kernel_x)
-        # sobel_y = self.convolution(smoothed_image, self.sobel_kernel_y)
-        # sobel_magnitude = np.sqrt(np.square(sobel_x) + np.square(sobel_y))
-        # thresholded_image = self.threshold(sobel_magnitude, threshold)
-        # self.display_image(thresholded_image, "Smoothed Sobel Edge Detection")
-
-        # Combine the two kernels
-        combined_kernel_x = self.convolution(self.gaussian_kernel, self.sobel_kernel_x, True)
-        combined_kernel_y = self.convolution(self.gaussian_kernel, self.sobel_kernel_y, True)
-        sobel_x = self.convolution(self.image, combined_kernel_x)
-        sobel_y = self.convolution(self.image, combined_kernel_y)
+        smoothed_image = self.convolution(self.image, self.gaussian_kernel)
+        sobel_x = self.convolution(smoothed_image, self.sobel_kernel_x)
+        sobel_y = self.convolution(smoothed_image, self.sobel_kernel_y)
         sobel_magnitude = np.sqrt(np.square(sobel_x) + np.square(sobel_y))
         thresholded_image = self.threshold(sobel_magnitude, threshold)
         self.display_image(thresholded_image, "Smoothed Sobel Edge Detection")
+
+        # Combine the two kernels
+        # combined_kernel_x = self.convolution(self.gaussian_kernel, self.sobel_kernel_x, True)
+        # combined_kernel_y = self.convolution(self.gaussian_kernel, self.sobel_kernel_y, True)
+        # sobel_x = self.convolution(self.image, combined_kernel_x)
+        # sobel_y = self.convolution(self.image, combined_kernel_y)
+        # sobel_magnitude = np.sqrt(np.square(sobel_x) + np.square(sobel_y))
+        # thresholded_image = self.threshold(sobel_magnitude, threshold)
+        # self.display_image(thresholded_image, "Smoothed Sobel Edge Detection")
 
     def canny_edge_detection(self, lower_threshold, upper_threshold):
         canny_edge_detection = cv.Canny(self.image, lower_threshold, upper_threshold)
