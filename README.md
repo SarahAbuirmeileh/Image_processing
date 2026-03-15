@@ -13,7 +13,6 @@ This repository contains a collection of image processing programs implemented i
   - [3. Detection of Green Football Fields](#3-detection-of-green-football-fields)
   - [4. Coin Segmentation](#4-coin-segmentation)
   - [5. Video Cartoonization](#5-video-cartoonization)
-  - [Installation](#installation)
 
 ---
 
@@ -88,11 +87,3 @@ This program cartoonizes videos by applying a watercolor-inspired effect to each
 
 **Example Output:**
 - Original video vs. cartoonized video
-
----
-
-## Installation
-
-1. Clone the repository:
-```bash
-git clone https://github.com/your-username/image-processing-projects.git
