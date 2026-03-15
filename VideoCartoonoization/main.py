@@ -32,9 +32,8 @@ class VideoCartoonoization:
     def display_video(self, images, video_name, frame_rate = 40):
         
         seconds = int(1000 / frame_rate)
-
         for image in images:
-            cv.imshow(video_name, image)
+            # cv.imshow(video_name, image)
 
             if cv.waitKey(seconds) == ord('0'):
                 break
@@ -107,17 +106,34 @@ class VideoCartoonoization:
         return dilated_image
 
     
-    def start(self, edge_thickness = 1, colors_number = 10, frame_rate = 1):
+    def start(self, edge_thickness = 1, colors_number = 10, frame_rate = 40):
 
         self.read_video()
-        watered_video = self.water_color_video(self.images[:5], edge_thickness, colors_number)
+        watered_video = self.water_color_video(self.images, edge_thickness, colors_number)
         self.display_video(watered_video, "Cartoonized Video", frame_rate)
 
+        self.save_video(watered_video, "CartoonizedVideo3.mp4", frame_rate)
+
+
+    def save_video(self, images, output_path, frame_rate=30):
+        if not images:
+            print("No images to save.")
+            return
+
+        height, width, _ = images[0].shape
+        fourcc = cv.VideoWriter_fourcc(*'mp4v')  
+        out = cv.VideoWriter(output_path, fourcc, frame_rate, (width, height))
+
+        for img in images:
+            out.write(img)
+
+        out.release()
+        print(f"Video saved to {output_path}")
 
 
 if __name__ == "__main__":
 
-    cartooinze_video = VideoCartoonoization("./assets/flower.mp4")
+    cartooinze_video = VideoCartoonoization("./assets/flower3.mp4")
     cartooinze_video.start()
     
     cv.destroyAllWindows()
